@@ -1,0 +1,564 @@
+/* 编辑器布局 */
+.editor-layout {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 54px); /* 适配新导航栏高度 */
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+.editor-layout-top {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.editor-center {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* 侧边栏 - 黑客终端风格 */
+.sidebar {
+    width: 260px;
+    background: rgba(10, 14, 23, 0.95);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-shrink: 0;
+    backdrop-filter: blur(5px);
+}
+
+.sidebar-header {
+    padding: 15px;
+    background: rgba(0, 243, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+    text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
+}
+
+.sidebar-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.icon-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    transition: all 0.2s;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: rgba(0, 243, 255, 0.1);
+    color: var(--accent-color);
+    border-color: rgba(0, 243, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+}
+
+/* 文件树 */
+.file-tree {
+    flex: 1;
+    padding: 10px 0;
+    overflow-y: auto;
+    font-family: 'Consolas', monospace;
+}
+
+.folder-item {
+    /* Container for header + children, no padding */
+    display: block; 
+}
+
+.file-item, .folder-header {
+    padding: 6px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    transition: all 0.2s;
+    user-select: none;
+    position: relative;
+    border-left: 2px solid transparent;
+}
+
+.file-item:hover, .folder-header:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-bright);
+}
+
+.file-item.active {
+    background: rgba(0, 243, 255, 0.1);
+    color: var(--accent-color);
+    border-left-color: var(--accent-color);
+    box-shadow: inset 10px 0 20px -10px rgba(0, 243, 255, 0.1);
+}
+
+.folder-header {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.folder-children {
+    margin-left: 18px; /* Increased indentation */
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.folder-item.collapsed .folder-children {
+    display: none;
+}
+
+.folder-toggle {
+    width: 14px;
+    display: inline-block;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-right: -4px; /* Adjust spacing */
+}
+
+.folder-icon {
+    width: 16px;
+    display: inline-block;
+    text-align: center;
+    font-size: 14px;
+    color: var(--accent-color);
+}
+
+.file-icon {
+    width: 16px;
+    text-align: center;
+    opacity: 0.8;
+    margin-left: 18px; /* Indent files same as folder content if at root, or adjust in JS structure */
+}
+/* Note: files inside folder-children will be indented by folder-children margin. 
+   Files at root need to align with folder headers.
+   Folder header has toggle + icon. File has icon.
+   Toggle is approx 14px. 
+   So file icon should have margin-left to match toggle space.
+*/
+
+.folder-children .file-item, .folder-children .folder-header {
+    padding-left: 10px; /* Reduce padding in nested levels to save space or keep consistent? */
+}
+
+/* Fix indentation alignment */
+.file-item .file-icon {
+     margin-left: 14px; /* Space for the missing toggle */
+}
+
+.file-actions {
+    margin-left: auto;
+    display: none;
+    gap: 4px;
+}
+
+.file-item:hover .file-actions, .folder-header:hover .file-actions {
+    display: flex;
+}
+
+
+.file-action-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+}
+
+.file-action-btn:hover {
+    color: var(--accent-color);
+}
+
+/* 模板区域 */
+.templates-section {
+    border-top: 1px solid var(--border-color);
+    padding: 0;
+    max-height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.templates-section h3 {
+    padding: 12px 15px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    background: rgba(0, 243, 255, 0.05);
+    margin: 0;
+    border-bottom: 1px solid var(--border-color);
+    letter-spacing: 1px;
+}
+
+#templates-list {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+}
+
+.template-item {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    font-family: 'Consolas', monospace;
+    transition: all 0.2s;
+}
+
+.template-item:hover {
+    background: rgba(0, 243, 255, 0.1);
+    color: var(--accent-color);
+    border-color: rgba(0, 243, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+}
+
+/* 主编辑区域 */
+.editor-main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.editor-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-primary);
+    min-height: 0;
+    overflow: hidden;
+    min-width: 0;
+}
+
+/* 标签页 */
+.tabs-container {
+    background: #05080f;
+    display: flex;
+    overflow-x: auto;
+    height: 38px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab {
+    padding: 0 35px 0 15px;
+    background: #0a0e17;
+    border-right: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    min-width: 120px;
+    max-width: 200px;
+    height: 100%;
+    font-family: 'Consolas', monospace;
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    background: #151b2b;
+    color: var(--text-bright);
+}
+
+.tab.active {
+    background: #151b2b;
+    color: var(--accent-color);
+    border-top: 2px solid var(--accent-color);
+    text-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
+}
+
+.tab-close {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.tab:hover .tab-close {
+    opacity: 1;
+}
+
+.tab-close:hover {
+    background: rgba(255, 0, 85, 0.2);
+    color: var(--error-color);
+}
+
+/* 编辑器区域 */
+.editor-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #0a0e17; /* 深色背景 */
+}
+
+#code-editor {
+    width: 100%;
+    height: 100%;
+    background: #0a0e17;
+    border: none;
+    padding: 0; /* Monaco needs 0 padding on container */
+    overflow: hidden;
+}
+
+.editor-actions {
+    background: #05080f;
+    border-top: 1px solid var(--border-color);
+    padding: 8px 16px;
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.btn-toggle-preview {
+    margin-left: auto;
+    background: rgba(0, 243, 255, 0.1);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    height: 32px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.btn-toggle-preview svg {
+    display: block;
+}
+
+.btn-toggle-preview:hover {
+    background: var(--accent-color);
+    color: #000;
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.btn-toggle-preview.active {
+    background: var(--accent-color);
+    color: #000;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+/* 输出面板 */
+.output-panel {
+    background: #05080f;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    flex-shrink: 0;
+    transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.output-header {
+    background: rgba(0, 243, 255, 0.05);
+    padding: 6px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    height: 35px;
+}
+
+.output-header h3 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    display: flex;
+    gap: 8px;
+    letter-spacing: 1px;
+}
+
+.output-content {
+    flex: 1;
+    overflow: hidden;
+    background: #05080f;
+}
+
+#console-output {
+    padding: 10px;
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+}
+
+.console-log, .console-error, .console-warn, .console-info {
+    padding: 4px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-family: inherit;
+}
+
+.console-log { color: #cbd5e1; }
+.console-error { color: #ff0055; background: rgba(255, 0, 85, 0.05); }
+.console-warn { color: #ffd700; }
+.console-info { color: #00f3ff; }
+
+/* 右侧预览面板 */
+.preview-panel {
+    width: 400px;
+    background: #05080f;
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.preview-panel.collapsed {
+    width: 0 !important;
+    border: none;
+}
+
+.preview-header {
+    background: rgba(0, 243, 255, 0.05);
+    padding: 0 16px;
+    height: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.preview-header h3 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+}
+
+.preview-toggle {
+    background: transparent;
+    border: none;
+    color: var(--accent-color);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.preview-toggle:hover {
+    background: rgba(0, 243, 255, 0.15);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.preview-content {
+    flex: 1;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+#preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    background: #fff;
+}
+
+/* 分隔条通用样式 */
+.resizer, .preview-resizer {
+    background: #05080f;
+    z-index: 100;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.resizer {
+    height: 4px;
+    cursor: ns-resize;
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.preview-resizer {
+    width: 6px; /* Slightly wider for visibility */
+    cursor: col-resize; /* More standard resize cursor */
+    height: 100%;
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid transparent; /* Simpler border */
+    background: #05080f;
+}
+
+/* Increase hit area using pseudo-element */
+.preview-resizer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -4px;
+    right: -4px;
+    z-index: 10;
+    cursor: col-resize;
+}
+
+.resizer:hover, .preview-resizer:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生端 - JavaScript在线编程平台</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/vscode-theme.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="navbar-left">
+                <h1>👨‍🎓 学生端</h1>
+            </div>
+            <div class="navbar-center">
+                <button class="nav-btn active" data-view="editor">编辑器</button>
+                <button class="nav-btn" data-view="homework">我的作业</button>
+                <button class="nav-btn" data-view="grades">成绩查询</button>
+                <button class="nav-btn" data-view="codelib">代码库</button>
+            </div>
+            <div class="navbar-right">
+                <span id="student-info">学生: 未登录</span>
+                <button class="btn-icon" id="login-btn" onclick="studentApp.login()">🔑 登录</button>
+                <button class="btn-icon" onclick="location.href='index.html'">🏠 返回首页</button>
+            </div>
+        </div>
+
+        <!-- 编辑器视图 -->
+        <div class="view-container" id="editor-view">
+            <div class="editor-layout">
+                <div class="editor-layout-top">
+                    <!-- 侧边栏 -->
+                    <div class="sidebar">
+                        <div class="sidebar-header">
+                            <h3>📁 我的项目</h3>
+                            <div class="sidebar-actions">
+                                <button class="icon-btn" onclick="studentEditor.newFile()" title="新建文件">📄</button>
+                                <button class="icon-btn" onclick="studentEditor.newFolder()" title="新建文件夹">📁</button>
+                                <button class="icon-btn" onclick="studentEditor.refreshFiles()" title="刷新">🔄</button>
+                                <button class="icon-btn" onclick="document.getElementById('local-upload').click()" title="上传本地代码">📤</button>
+                                <input type="file" id="local-upload" style="display: none;" onchange="studentEditor.uploadLocalFile(this)" webkitdirectory directory multiple>
+                            </div>
+                        </div>
+                        <div class="file-tree" id="file-tree"></div>
+                    </div>
+
+                    <!-- 中间区域（编辑器 + 控制台） -->
+                    <div class="editor-center">
+                        <div class="editor-main-wrapper">
+                            <div class="editor-main">
+                                <div class="tabs-container" id="tabs-container"></div>
+                                <div class="editor-area">
+                                    <div id="code-editor"></div>
+                                </div>
+                                <div class="editor-actions">
+                                    <button class="btn-primary" onclick="studentEditor.runCode()">▶️ 运行代码</button>
+                                    <button class="btn-secondary" onclick="studentEditor.saveFile()">💾 保存</button>
+                                    <button class="btn-secondary" onclick="studentEditor.clearConsole()">🗑️ 清空控制台</button>
+                                    <button class="btn-toggle-preview" id="toggle-preview-btn" onclick="studentEditor.togglePreview()">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 预览
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 控制台面板 -->
+                        <div class="output-panel">
+                            <div class="output-header">
+                                <h3>📺 控制台</h3>
+                            </div>
+                            <div class="output-content">
+                                <div id="console-output" class="output-section"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 预览分隔条 -->
+                    <div class="preview-resizer"></div>
+
+                    <!-- 右侧预览面板 -->
+                    <div class="preview-panel collapsed" id="preview-panel">
+                        <div class="preview-header">
+                            <h3>👁️ 预览</h3>
+                            <button class="preview-toggle" onclick="studentEditor.togglePreview()" title="关闭预览">◀</button>
+                        </div>
+                        <div class="preview-content">
+                            <iframe id="preview-frame"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 作业视图 -->
+        <div class="view-container" id="homework-view" style="display:none;">
+            <div class="content-panel">
+                <h2>📝 我的作业</h2>
+                <div class="homework-list" id="student-homework-list"></div>
+            </div>
+        </div>
+
+        <!-- 成绩视图 -->
+        <div class="view-container" id="grades-view" style="display:none;">
+            <div class="content-panel">
+                <h2>📊 成绩查询</h2>
+                <div class="grades-container" id="grades-container"></div>
+            </div>
+        </div>
+
+        <!-- 代码库视图 -->
+        <div class="view-container" id="codelib-view" style="display:none;">
+            <div class="content-panel">
+                <h2>📚 我的代码库</h2>
+                <div class="panel-actions">
+                    <button class="btn-primary" onclick="studentApp.createCodeLibItem()">➕ 新建代码库</button>
+                    <button class="btn-secondary" onclick="document.getElementById('codelib-upload').click()">📤 上传本地代码</button>
+                    <input type="file" id="codelib-upload" style="display: none;" onchange="studentApp.uploadCodeLib(this)" webkitdirectory directory multiple>
+                </div>
+                <div class="codelib-container" id="codelib-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="modal-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/fileManager.js"></script>
+    <script src="js/compiler.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/student.js"></script>
+</body>
+</html>

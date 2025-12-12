@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师端 - JavaScript在线编程平台</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/vscode-theme.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <div class="navbar">
+            <div class="navbar-left">
+                <h1>👨‍🏫 教师端</h1>
+            </div>
+            <div class="navbar-center">
+                <button class="nav-btn active" data-view="dashboard">仪表盘</button>
+                <button class="nav-btn" data-view="students">学生管理</button>
+                <button class="nav-btn" data-view="homework">作业管理</button>
+                <button class="nav-btn" data-view="grading">批改作业</button>
+                <button class="nav-btn" data-view="codelib">代码库</button>
+                <!-- 编辑器不再作为主导航，但保留以便直接访问 -->
+                <button class="nav-btn" data-view="editor" style="opacity: 0.7; font-size: 0.85em;">⌨️ 编辑器</button>
+            </div>
+            <div class="navbar-right">
+                <button class="btn-icon" onclick="teacherApp.exportDB()" title="导出数据库备份">📥 备份数据</button>
+                <input type="file" id="db-upload" style="display: none;" onchange="teacherApp.importDB(this)">
+                <button class="btn-icon" onclick="document.getElementById('db-upload').click()" title="导入数据库备份">📤 恢复数据</button>
+                <button class="btn-icon" onclick="location.href='index.html'">🏠 返回首页</button>
+            </div>
+        </div>
+
+        <!-- 仪表盘视图 (默认) -->
+        <div class="view-container" id="dashboard-view">
+            <div class="content-panel">
+                <h2>📊 教学仪表盘</h2>
+                
+                <div class="dashboard-stats" id="dashboard-stats">
+                    <!-- 统计卡片将通过 JS 渲染 -->
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-section">
+                        <h3>🔔 待办事项</h3>
+                        <div id="dashboard-todos" class="todo-list">
+                            <!-- 待办列表 -->
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-section">
+                        <h3>📝 最新提交</h3>
+                        <div id="dashboard-recent-subs" class="recent-list">
+                            <!-- 最新提交列表 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编辑器视图 (默认隐藏) -->
+        <div class="view-container" id="editor-view" style="display:none;">
+            <div class="editor-layout">
+                <div class="editor-layout-top">
+                    <!-- 侧边栏 -->
+                    <div class="sidebar">
+                        <div class="sidebar-header">
+                            <h3>📁 项目管理</h3>
+                            <div class="sidebar-actions">
+                                <button class="icon-btn" onclick="teacherEditor.newFile()" title="新建文件">📄</button>
+                                <button class="icon-btn" onclick="teacherEditor.newFolder()" title="新建文件夹">📁</button>
+                                <button class="icon-btn" onclick="teacherEditor.refreshFiles()" title="刷新">🔄</button>
+                                <button class="icon-btn" onclick="document.getElementById('local-upload').click()" title="上传本地代码">📤</button>
+                                <input type="file" id="local-upload" style="display: none;" onchange="teacherEditor.uploadLocalFile(this)" webkitdirectory directory multiple>
+                            </div>
+                        </div>
+                        <div class="file-tree" id="file-tree"></div>
+                        
+                        <div class="templates-section">
+                            <div class="sidebar-header">
+                                <h3>📚 代码模板</h3>
+                                <div class="sidebar-actions">
+                                    <button class="icon-btn" onclick="teacherEditor.createNewTemplate()" title="新建模板">➕</button>
+                                </div>
+                            </div>
+                            <div id="templates-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- 中间区域（编辑器 + 控制台） -->
+                    <div class="editor-center">
+                        <div class="editor-main-wrapper">
+                            <div class="editor-main">
+                                <div class="tabs-container" id="tabs-container"></div>
+                                <div class="editor-area">
+                                    <div id="code-editor"></div>
+                                </div>
+                                <div class="editor-actions">
+                                    <button class="btn-primary" onclick="teacherEditor.runCode()">▶️ 运行代码</button>
+                                    <button class="btn-secondary" onclick="teacherEditor.saveFile()">💾 保存</button>
+                                    <button class="btn-secondary" onclick="teacherEditor.addToCodeLib()">📚 加入代码库</button>
+                                    <button class="btn-secondary" onclick="teacherEditor.clearConsole()">🗑️ 清空控制台</button>
+                                    <button class="btn-toggle-preview" id="toggle-preview-btn" onclick="teacherEditor.togglePreview()">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> 预览
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 控制台面板 -->
+                        <div class="output-panel">
+                            <div class="output-header">
+                                <h3>📺 控制台</h3>
+                            </div>
+                            <div class="output-content">
+                                <div id="console-output" class="output-section"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 预览分隔条 -->
+                    <div class="preview-resizer"></div>
+
+                    <!-- 右侧预览面板 -->
+                    <div class="preview-panel collapsed" id="preview-panel">
+                        <div class="preview-header">
+                            <h3>👁️ 预览</h3>
+                            <button class="preview-toggle" onclick="teacherEditor.togglePreview()" title="关闭预览">◀</button>
+                        </div>
+                        <div class="preview-content">
+                            <iframe id="preview-frame"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 学生管理视图 -->
+        <div class="view-container" id="students-view" style="display:none;">
+            <div class="content-panel">
+                <h2>👥 学生管理</h2>
+                <div class="panel-actions">
+                    <button class="btn-primary" onclick="teacherApp.importStudents()">📥 导入学生名单</button>
+                    <input type="file" id="student-upload" style="display: none;" accept=".csv" onchange="teacherApp.handleStudentImport(this)">
+                    <button class="btn-secondary" onclick="teacherApp.addStudent()">➕ 添加学生</button>
+                    <button class="btn-secondary" onclick="teacherApp.exportStudents()">📤 导出名单</button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="student-search" placeholder=" 搜索学生姓名或学号..." onkeyup="teacherApp.searchStudents()">
+                </div>
+                <div class="students-list" id="students-list"></div>
+            </div>
+        </div>
+
+        <!-- 作业管理视图 -->
+        <div class="view-container" id="homework-view" style="display:none;">
+            <div class="content-panel">
+                <h2>📝 作业管理</h2>
+                <div class="panel-actions">
+                    <button class="btn-primary" onclick="teacherApp.createHomework()">➕ 布置新作业</button>
+                </div>
+                <div class="homework-list" id="homework-list"></div>
+            </div>
+        </div>
+
+        <!-- 代码库视图 -->
+        <div class="view-container" id="codelib-view" style="display:none;">
+            <div class="content-panel">
+                <h2>📚 代码库管理</h2>
+                <div class="panel-actions">
+                    <button class="btn-primary" onclick="teacherApp.createCodeLibItem()">➕ 新建代码库</button>
+                    <button class="btn-secondary" onclick="document.getElementById('codelib-upload').click()">📤 上传本地代码</button>
+                    <input type="file" id="codelib-upload" style="display: none;" onchange="teacherApp.uploadCodeLib(this)" webkitdirectory directory multiple>
+                </div>
+                <div class="codelib-container" id="codelib-container"></div>
+            </div>
+        </div>
+
+        <!-- 批改作业视图 -->
+        <div class="view-container" id="grading-view" style="display:none;">
+            <div class="content-panel">
+                <h2>✍️ 批改作业</h2>
+                <div class="grading-container" id="grading-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="modal-overlay" class="modal-overlay"></div>
+    <div id="modal-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/fileManager.js"></script>
+    <script src="js/compiler.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/teacher.js"></script>
+</body>
+</html>

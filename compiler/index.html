@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript在线编程平台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00f3ff;
+            --secondary-color: #bc13fe;
+            --bg-dark: #050505;
+            --glass-bg: rgba(10, 14, 23, 0.7);
+            --glass-border: rgba(0, 243, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-dark);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 动态背景系统 */
+        .cyber-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        .grid-plane {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            left: -50%;
+            top: -50%;
+            background-image: 
+                linear-gradient(transparent 98%, rgba(0, 243, 255, 0.3) 99%),
+                linear-gradient(90deg, transparent 98%, rgba(0, 243, 255, 0.3) 99%);
+            background-size: 60px 60px;
+            transform: rotateX(60deg);
+            animation: planeMove 10s linear infinite;
+            mask-image: linear-gradient(to bottom, transparent, black 40%, black 80%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 80%, transparent);
+        }
+
+        .grid-plane.top {
+            transform: rotateX(-60deg) translateY(-100px) translateZ(-100px);
+            top: -80%;
+        }
+
+        @keyframes planeMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 60px; }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(var(--primary-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.3;
+            animation: particleFloat 20s linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-40px); }
+        }
+
+        /* 主容器 */
+        .container {
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            animation: containerIn 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes containerIn {
+            from { opacity: 0; transform: scale(0.9); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+
+        /* 标题故障特效 */
+        .glitch-wrapper {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+            position: relative;
+            z-index: 1;
+        }
+
+        h1::before, h1::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+        }
+
+        h1::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--secondary-color);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim-1 5s infinite linear alternate-reverse;
+        }
+
+        h1::after {
+            left: -2px;
+            text-shadow: -2px 0 var(--primary-color);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim-2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(30px, 9999px, 10px, 0); }
+            5% { clip: rect(80px, 9999px, 50px, 0); }
+            10% { clip: rect(40px, 9999px, 90px, 0); }
+            15% { clip: rect(10px, 9999px, 30px, 0); }
+            20% { clip: rect(60px, 9999px, 70px, 0); }
+            100% { clip: rect(20px, 9999px, 60px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(10px, 9999px, 80px, 0); }
+            5% { clip: rect(90px, 9999px, 20px, 0); }
+            10% { clip: rect(20px, 9999px, 60px, 0); }
+            15% { clip: rect(70px, 9999px, 40px, 0); }
+            20% { clip: rect(30px, 9999px, 10px, 0); }
+            100% { clip: rect(50px, 9999px, 90px, 0); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 5rem;
+            color: #94a3b8;
+            font-weight: 300;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        .subtitle::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        }
+
+        /* 角色选择卡片 */
+        .role-selection {
+            display: flex;
+            gap: 4rem;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .role-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 3rem 2rem;
+            width: 320px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backdrop-filter: blur(10px);
+            clip-path: polygon(
+                20px 0, 100% 0, 
+                100% calc(100% - 20px), calc(100% - 20px) 100%, 
+                0 100%, 0 20px
+            );
+        }
+
+        .role-card:hover {
+            transform: translateY(-15px) rotateX(5deg);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.15);
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .role-card:hover::before {
+            opacity: 1;
+        }
+
+        .role-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+            transition: transform 0.3s;
+        }
+
+        .role-card:hover .role-icon {
+            transform: scale(1.1) translateZ(20px);
+        }
+
+        .role-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .role-desc {
+            color: #a0aec0;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            text-align: left;
+            padding-left: 10px;
+            border-left: 2px solid rgba(0, 243, 255, 0.3);
+        }
+
+        /* 底部特性列表 */
+        .features {
+            margin-top: 6rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .feature-item {
+            font-family: 'Consolas', monospace;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            opacity: 0.7;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .feature-item:hover {
+            opacity: 1;
+            text-shadow: 0 0 10px var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* 模态框样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .login-modal {
+            background: rgba(10, 14, 23, 0.9);
+            border: 1px solid var(--primary-color);
+            padding: 60px 50px;
+            width: 500px;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 100px rgba(0, 243, 255, 0.1);
+            clip-path: polygon(
+                30px 0, 100% 0, 
+                100% calc(100% - 30px), calc(100% - 30px) 100%, 
+                0 100%, 0 30px
+            );
+        }
+
+        .modal-overlay.active .login-modal {
+            transform: scale(1);
+        }
+
+        /* 角落装饰 */
+        .corner-decor {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-color);
+            transition: all 0.3s;
+        }
+
+        .top-left { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .bottom-right { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        .login-modal h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #333;
+            padding: 15px 5px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: 'Consolas', monospace;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: linear-gradient(to top, rgba(0, 243, 255, 0.1), transparent);
+        }
+
+        .form-group label {
+            position: absolute;
+            left: 5px;
+            top: 15px;
+            color: #666;
+            transition: all 0.3s;
+            pointer-events: none;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .form-group input:focus ~ label,
+        .form-group input:not(:placeholder-shown) ~ label {
+            top: -20px;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            background: #fff;
+            box-shadow: 0 0 30px var(--primary-color);
+            letter-spacing: 2px;
+        }
+
+        .btn-register {
+            background: transparent;
+            border: 1px solid #333;
+            color: #666;
+            margin-top: 15px;
+            width: 100%;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .btn-register:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .error-message {
+            background: rgba(255, 0, 85, 0.1);
+            color: #ff0055;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 3px solid #ff0055;
+            font-family: 'Consolas', monospace;
+            display: none;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-bg">
+        <div class="grid-plane"></div>
+        <div class="grid-plane top"></div>
+        <div class="particles"></div>
+    </div>
+
+    <div class="container">
+        <div class="glitch-wrapper">
+            <h1 data-text="JS ONLINE PLATFORM">JS ONLINE PLATFORM</h1>
+        </div>
+        <br>
+        <p class="subtitle">FUTURE CODING ENVIRONMENT</p>
+        
+        <div class="role-selection">
+            <div class="role-card" onclick="showLogin('teacher')">
+                <div class="role-icon">👨‍🏫</div>
+                <div class="role-title">TEACHER</div>
+                <div class="role-desc">
+                    教学管理系统 / 作业批改<br>
+                    代码库构建 / 数据分析
+                </div>
+            </div>
+
+            <div class="role-card" onclick="showLogin('student')">
+                <div class="role-icon">👨‍🎓</div>
+                <div class="role-title">STUDENT</div>
+                <div class="role-desc">
+                    沉浸式编程 / 实时编译<br>
+                    项目管理 / 成绩追踪
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-item">[ SYSTEM.READY ]</div>
+            <div class="feature-item">[ CORE.ONLINE ]</div>
+            <div class="feature-item">[ SECURE.V2 ]</div>
+        </div>
+    </div>
+
+    <!-- 登录/注册模态框 -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="login-modal">
+            <div class="corner-decor top-left"></div>
+            <div class="corner-decor bottom-right"></div>
+            <div class="modal-close" onclick="closeModal()">×</div>
+            
+            <h2 id="modal-title">SYSTEM LOGIN</h2>
+            <div id="error-message" class="error-message">ERROR: ACCESS DENIED</div>
+            
+            <div id="login-form">
+                <div class="form-group">
+                    <input type="text" id="login-username" placeholder=" ">
+                    <label>USERNAME</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" placeholder=" ">
+                    <label>PASSWORD</label>
+                </div>
+                <button class="btn-login" onclick="handleLogin()">ACCESS</button>
+                <button class="btn-register" onclick="showRegister()">CREATE ACCOUNT</button>
+            </div>
+
+            <div id="register-form" style="display:none;">
+                <div class="form-group">
+                    <input type="text" id="reg-username" placeholder=" ">
+                    <label>USERNAME</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="reg-password" placeholder=" ">
+                    <label>PASSWORD</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="reg-password-confirm" placeholder=" ">
+                    <label>CONFIRM</label>
+                </div>
+                <div id="student-fields" style="display:none;">
+                    <div class="form-group">
+                        <input type="text" id="reg-name" placeholder=" ">
+                        <label>FULL NAME</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="reg-student-id" placeholder=" ">
+                        <label>STUDENT ID</label>
+                    </div>
+                </div>
+                <button class="btn-login" onclick="handleRegister()">REGISTER</button>
+                <button class="btn-register" onclick="showLogin()">BACK TO LOGIN</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script>
+        let currentRole = '';
+
+        function showLogin(role) {
+            if (role) currentRole = role; // Keep role if not passed (e.g. back from register)
+            document.getElementById('modal-overlay').classList.add('active');
+            document.getElementById('modal-title').textContent = currentRole === 'teacher' ? 'TEACHER LOGIN' : 'STUDENT LOGIN';
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('error-message').classList.remove('show');
+            
+            setTimeout(() => document.getElementById('login-username').focus(), 100);
+        }
+
+        function showRegister() {
+            document.getElementById('modal-title').textContent = currentRole === 'teacher' ? 'TEACHER REG' : 'STUDENT REG';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'block';
+            document.getElementById('student-fields').style.display = currentRole === 'student' ? 'block' : 'none';
+            document.getElementById('error-message').classList.remove('show');
+            
+            setTimeout(() => document.getElementById('reg-username').focus(), 100);
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+            clearInputs();
+        }
+
+        function clearInputs() {
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => input.value = '');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = '> ' + message;
+            errorDiv.classList.add('show');
+            
+            setTimeout(() => {
+                errorDiv.classList.remove('show');
+            }, 3000);
+        }
+
+        async function handleLogin() {
+            if (db.ready) await db.ready;
+
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                showError('CREDENTIALS REQUIRED');
+                return;
+            }
+
+            const users = db.getUsers(currentRole);
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                db.setCurrentUser(user);
+                
+                const btn = document.querySelector('#login-form .btn-login');
+                btn.innerHTML = 'GRANTED';
+                btn.style.background = '#00ff9d';
+                btn.style.boxShadow = '0 0 30px #00ff9d';
+                
+                setTimeout(() => {
+                    if (currentRole === 'teacher') {
+                        window.location.href = 'teacher.html';
+                    } else {
+                        window.location.href = 'student.html';
+                    }
+                }, 1000);
+            } else {
+                showError('INVALID CREDENTIALS');
+            }
+        }
+
+        async function handleRegister() {
+            if (db.ready) await db.ready;
+
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-password-confirm').value;
+
+            if (!username || !password || !confirmPassword) {
+                showError('ALL FIELDS REQUIRED');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('PASSWORD MISMATCH');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('PASSWORD TOO SHORT (<6)');
+                return;
+            }
+
+            const users = db.getUsers(currentRole);
+            if (users.find(u => u.username === username)) {
+                showError('USER ALREADY EXISTS');
+                return;
+            }
+
+            const newUser = {
+                username: username,
+                password: password,
+                role: currentRole
+            };
+
+            if (currentRole === 'student') {
+                const name = document.getElementById('reg-name').value.trim();
+                const studentId = document.getElementById('reg-student-id').value.trim();
+                
+                if (!name || !studentId) {
+                    showError('DETAILS REQUIRED');
+                    return;
+                }
+
+                newUser.name = name;
+                newUser.studentId = studentId;
+            }
+
+            db.addUser(newUser);
+            alert('REGISTRATION COMPLETE');
+            showLogin();
+        }
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('login-form').style.display !== 'none') {
+                    handleLogin();
+                } else if (document.getElementById('register-form').style.display !== 'none') {
+                    handleRegister();
+                }
+            }
+        });
+        
+        document.getElementById('modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+</html>

@@ -1,0 +1,153 @@
+/* VSCode代码高亮主题 */
+
+/* JavaScript关键字 */
+.keyword {
+    color: #569cd6;
+    font-weight: bold;
+}
+
+/* 字符串 */
+.string {
+    color: #ce9178;
+}
+
+/* 数字 */
+.number {
+    color: #b5cea8;
+}
+
+/* 注释 */
+.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+
+/* 函数名 */
+.function {
+    color: #dcdcaa;
+}
+
+/* 变量 */
+.variable {
+    color: #9cdcfe;
+}
+
+/* 操作符 */
+.operator {
+    color: #d4d4d4;
+}
+
+/* 类型 */
+.type {
+    color: #4ec9b0;
+}
+
+/* HTML标签 */
+.tag {
+    color: #569cd6;
+}
+
+/* HTML属性 */
+.attribute {
+    color: #9cdcfe;
+}
+
+/* CSS属性 */
+.property {
+    color: #9cdcfe;
+}
+
+/* CSS值 */
+.value {
+    color: #ce9178;
+}
+
+/* 语法高亮辅助类 */
+.highlight-js {
+    background: #1e1e1e;
+    color: #d4d4d4;
+}
+
+.highlight-js .hljs-keyword,
+.highlight-js .hljs-selector-tag {
+    color: #569cd6;
+}
+
+.highlight-js .hljs-string,
+.highlight-js .hljs-attr {
+    color: #ce9178;
+}
+
+.highlight-js .hljs-number {
+    color: #b5cea8;
+}
+
+.highlight-js .hljs-comment {
+    color: #6a9955;
+}
+
+.highlight-js .hljs-function,
+.highlight-js .hljs-title {
+    color: #dcdcaa;
+}
+
+.highlight-js .hljs-variable {
+    color: #9cdcfe;
+}
+
+.highlight-js .hljs-built_in,
+.highlight-js .hljs-type {
+    color: #4ec9b0;
+}
+
+/* 行号 */
+.line-numbers {
+    counter-reset: line;
+}
+
+.line-numbers .line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 40px;
+    padding-right: 10px;
+    color: #858585;
+    text-align: right;
+    user-select: none;
+}
+
+/* 当前行高亮 */
+.current-line {
+    background: #2d2d30;
+}
+
+/* 选中文本 */
+#code-editor::selection {
+    background: #264f78;
+}
+
+/* 括号匹配 */
+.bracket-match {
+    background: #0064001a;
+    border: 1px solid #0f0;
+}
+
+/* 错误下划线 */
+.error-underline {
+    border-bottom: 2px wavy #f48771;
+}
+
+/* 警告下划线 */
+.warning-underline {
+    border-bottom: 2px wavy #cca700;
+}
+
+/* 搜索高亮 */
+.search-highlight {
+    background: #515c6a;
+}
+
+.search-highlight-current {
+    background: #f09632;
+    color: #000;
+}
